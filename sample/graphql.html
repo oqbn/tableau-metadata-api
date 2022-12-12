@@ -1,0 +1,53 @@
+query getWorkBookInfo($workbookName: String){ 
+
+  workbooks (filter: {name: $workbookName }) { 
+    name 
+    projectName 
+    
+    views (orderBy:{field: PATH, direction: ASC}){
+      index
+      name
+      __typename
+      path
+
+      ...on Sheet{
+        containedInDashboards {
+          name
+        }
+      }
+      
+      ...on Dashboard{ 
+        sheets{
+          name
+        }
+      }
+    }
+    
+    embeddedDatasources(orderBy:{field: NAME, direction: ASC}){
+      name
+      
+      fields(orderBy:{field: NAME, direction: ASC}){
+        name
+        description
+        
+        ...on ColumnField{
+          dataType
+          defaultFormat
+        }
+        ...on CalculatedField {
+          dataType
+          defaultFormat
+          formula
+        }
+        referencedByCalculations {
+          name
+        }
+        downstreamSheets {
+          name
+        }
+        
+      }
+    } 
+
+  }
+}
